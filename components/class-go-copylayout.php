@@ -159,13 +159,13 @@ class GO_CopyLayout
 		if( $has_sidebars )
 		{
 			echo '<li>Adding sidebar_widgets...</li>';
-			add_option('sidebars_widgets', $layout['sidebars_widgets'], '', 'yes');
+			update_option('sidebars_widgets', $layout['sidebars_widgets']);
 		}//end if
 
 		foreach($layout['widgets'] as $name => $value)
 		{
 			echo '<li>Adding ' . esc_html($name) . '...</li>';
-			add_option($name, $value, '', 'yes');
+			update_option($name, $value);
 		}//end foreach
 
 		echo '</div></div>';
