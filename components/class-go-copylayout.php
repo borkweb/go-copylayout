@@ -43,7 +43,7 @@ class GO_CopyLayout
 
 		if( in_array( 'sidebars_widgets', $args['which'] ) )
 		{
-			$return['sidebars_widgets'] = $options->sidebars_widgets;
+			$return['sidebars_widgets'] = $options['sidebars_widgets'];
 		}//end if
 
 		$do_widgets = in_array( 'widgets', $args['which'] );
@@ -159,13 +159,13 @@ class GO_CopyLayout
 		if( $has_sidebars )
 		{
 			echo '<li>Adding sidebar_widgets...</li>';
-			update_option('sidebars_widgets', $layout['sidebars_widgets']);
+			update_option( 'sidebars_widgets', unserialize( $layout['sidebars_widgets'] ) );
 		}//end if
 
-		foreach($layout['widgets'] as $name => $value)
+		foreach( $layout['widgets'] as $name => $value )
 		{
-			echo '<li>Adding ' . esc_html($name) . '...</li>';
-			update_option($name, $value);
+			echo '<li>Adding ' . esc_html( $name ) . '...</li>';
+			update_option( $name, unserialize( $value ) );
 		}//end foreach
 
 		echo '</div></div>';
