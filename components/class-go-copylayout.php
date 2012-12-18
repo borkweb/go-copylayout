@@ -7,7 +7,7 @@ class GO_CopyLayout
 	 */
 	public function admin_menu()
 	{
-		add_theme_page('Copy Layout', 'Copy Layout', 'edit_themes', 'copy-layout', array( $this, 'page' ) );
+		add_theme_page('Copy Layout', 'Copy Layout', 'edit_theme_options', 'copy-layout', array( $this, 'page' ) );
 	}//end admin_menu
 
 	/**
