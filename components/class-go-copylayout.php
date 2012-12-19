@@ -108,14 +108,14 @@ class GO_CopyLayout
 
 		if( false === $layout )
 		{
-			wp_die( 'Error during Base64 decoding. <a href="tools.php?page=copy-layout">Go back</a>?' );
+			wp_die( 'Error during Base64 decoding. <a href="themes.php?page=copy-layout">Go back</a>?' );
 		}//end if
 
 		$layout = unserialize($layout);
 
 		if( false === $layout )
 		{
-			wp_die( 'Error during unserialize operation. <a href="tools.php?page=copy-layout">Go back</a>?' );
+			wp_die( 'Error during unserialize operation. <a href="themes.php?page=copy-layout">Go back</a>?' );
 		}//end if
 
 		$options = get_alloptions();
