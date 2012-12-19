@@ -80,7 +80,7 @@ class GO_CopyLayout
 	 */
 	public function page()
 	{
-		if( ! current_user_can('edit_themes') )
+		if( ! current_user_can('edit_theme_options') )
 		{
 			wp_die( __('You do not have sufficient permissions to access this page.') );
 		}//end if
