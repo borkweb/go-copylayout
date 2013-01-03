@@ -8,6 +8,7 @@
 		<h3>Replace Layout</h3>
 		<p>Paste a saved layout here to override the current layout.</p>
 		<form action="themes.php?page=copy-layout" method="post">
+			<?php wp_nonce_field( 'go-copylayout-override', '_go_copylayout_override_nonce' ); ?>
 			<textarea cols="100" rows="15" name="layout"></textarea><br/>
 			<p class="submit">
 				<input type="submit" value="Save" class="button-primary"/>

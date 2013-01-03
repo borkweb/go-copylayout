@@ -87,6 +87,11 @@ class GO_CopyLayout
 
 		if( isset( $_POST['layout'] ) )
 		{
+			if ( ! wp_verify_nonce( $_REQUEST['_go_copylayout_override_nonce'], 'go-copylayout-override' ) )
+			{
+				wp_die( __('Invalid nonce') );
+			}//end if
+
 			return $this->replace_layout( $_POST['layout'] );
 		}//end if
 
