@@ -37,7 +37,7 @@ class GO_CopyLayout
 	{
 		$args = $this->fixup_args( $args );
 
-		$options = get_alloptions();
+		$options = wp_load_alloptions();
 
 		$return = array();
 
@@ -123,13 +123,13 @@ class GO_CopyLayout
 			wp_die( 'Error during unserialize operation. <a href="themes.php?page=copy-layout">Go back</a>?' );
 		}//end if
 
-		$options = get_alloptions();
+		$options = wp_load_alloptions();
 
 		//
 		// what do we have in the incoming array?
 		//
 
-		$has_widgets = isset($layout['widgets']);
+		$has_widgets  = isset($layout['widgets']);
 		$has_sidebars = isset($layout['sidebars_widgets']);
 
 		//
