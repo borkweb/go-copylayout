@@ -129,7 +129,7 @@ class GO_CopyLayout
 		// what do we have in the incoming array?
 		//
 
-		$has_widgets = isset($layout['widgets']);
+		$has_widgets  = isset($layout['widgets']);
 		$has_sidebars = isset($layout['sidebars_widgets']);
 
 		//
