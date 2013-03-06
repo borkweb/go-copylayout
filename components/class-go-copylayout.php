@@ -3,6 +3,27 @@
 class GO_CopyLayout
 {
 	/**
+	 * constructor
+	 */
+	public function __construct()
+	{
+		add_action( 'admin_init', array( $this, 'admin_init' ) );
+	}//end __construct
+
+	/**
+	 * Hook into the admin_init action to initialize the admin hooks
+	 */
+	public function admin_init()
+	{
+		if ( ! current_user_can( 'edit_theme_options' ) )
+		{
+			return;
+		}//end if
+
+		add_action('admin_menu', array( $this, 'admin_menu' ) );
+	}//end admin_init
+
+	/**
 	 * Add the "Copy Layout" link to the admin sidebar.
 	 */
 	public function admin_menu()
@@ -176,3 +197,15 @@ class GO_CopyLayout
 		echo '</div></div>';
 	}//end replace_layout
 }//end class
+
+function go_copylayout()
+{
+	global $go_copylayout;
+
+	if ( ! $go_copylayout )
+	{
+		$go_copylayout = new GO_CopyLayout;
+	}//end if
+
+	return $go_copylayout;
+}//end go_copylayout

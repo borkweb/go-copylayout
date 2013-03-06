@@ -13,9 +13,4 @@ Notes: Based on the version developed by Adam Backstrom of Plymouth State Univer
 
 require_once __DIR__ . '/components/class-go-copylayout.php';
 
-$go_copylayout = new GO_CopyLayout;
-
-if ( current_user_can( 'edit_theme_options' ) )
-{
-	add_action('admin_menu', array( $go_copylayout, 'admin_menu' ) );
-}//end if
+go_copylayout();
