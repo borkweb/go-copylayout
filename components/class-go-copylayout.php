@@ -7,13 +7,13 @@ class GO_CopyLayout
 	 */
 	public function __construct()
 	{
-		add_action( 'admin_init', array( $this, 'admin_init' ) );
+		add_action( 'init', array( $this, 'init' ) );
 	}//end __construct
 
 	/**
-	 * Hook into the admin_init action to initialize the admin hooks
+	 * Hook into the init action to initialize the admin hooks (admin_init is too late)
 	 */
-	public function admin_init()
+	public function init()
 	{
 		if ( ! current_user_can( 'edit_theme_options' ) )
 		{
@@ -21,7 +21,7 @@ class GO_CopyLayout
 		}//end if
 
 		add_action('admin_menu', array( $this, 'admin_menu' ) );
-	}//end admin_init
+	}//end init
 
 	/**
 	 * Add the "Copy Layout" link to the admin sidebar.
