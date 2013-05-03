@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: GO Copy Layout
+Plugin Name: GigaOM Copy Layout
 Plugin URI: http://
 Description: Copy widgets and widget settings
 Version: 2.0
