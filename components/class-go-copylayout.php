@@ -181,34 +181,31 @@ class GO_CopyLayout
 
 		$options = wp_load_alloptions();
 
+		// unserialize the sidebars_widgets - this is the cornerstone of the import
+		$options['sidebars_widgets'] = isset( $options['sidebars_widgets'] ) ? unserialize( $options['sidebars_widgets'] ) : array();
+
+		// unserialize all of the current site's widgets
+		foreach ( $options as $name => $widget_data )
+		{
+			if( 'widget_' === substr( $name, 0, 7 ) )
+			{
+				$options[ $name ] = unserialize( $options[ $name ] );
+			}//end if
+		}//end foreach
+
 		//
 		// what do we have in the incoming array?
 		//
 
-		$has_widgets  = isset($layout['widgets']);
-		$has_sidebars = isset($layout['sidebars_widgets']);
+		$has_widgets  = isset( $layout['widgets'] );
+		$has_sidebars = isset( $layout['sidebars_widgets'] );
 
 		//
 		// delete things that need to be replaced
 		//
 
 		echo '<h3>Deleting options...</h3><ol>';
-
-		if( $has_sidebars )
-		{
-			echo '<li>Deleting sidebar_widgets...</li>';
-			delete_option('sidebars_widgets');
-		}//end if
-
-		foreach($options as $name => $value)
-		{
-			if( $has_widgets && 'widget_' === substr($name, 0, 7) )
-			{
-				echo '<li>Deleting ' . esc_html($name) . '...</li>';
-				delete_option($name);
-			}//end if
-		}//end foreach
-
+		$options = $this->delete_sidebars( $options, $layout );
 		echo '</ol>';
 
 		//
@@ -220,17 +217,187 @@ class GO_CopyLayout
 		if( $has_sidebars )
 		{
 			echo '<li>Adding sidebar_widgets...</li>';
-			update_option( 'sidebars_widgets', unserialize( $layout['sidebars_widgets'] ) );
+			$options = $this->add_sidebars( $options, $layout );
 		}//end if
-
-		foreach( $layout['widgets'] as $name => $value )
-		{
-			echo '<li>Adding ' . esc_html( $name ) . '...</li>';
-			update_option( $name, unserialize( $value ) );
-		}//end foreach
 
 		echo '</div></div>';
 	}//end replace_layout
+
+	/**
+	 * Removes sidebars from the current site
+	 *
+	 * @param $options Array array of options
+	 * @param $layout Array data from import
+	 */
+	public function delete_sidebars( $options, $layout )
+	{
+		$has_widgets  = isset( $layout['widgets'] );
+		$has_sidebars = isset( $layout['sidebars_widgets'] );
+
+		if ( $has_sidebars )
+		{
+			echo '<li>Deleting sidebar_widgets...</li>';
+
+			$sidebars_to_remove = is_array( $options['sidebars_widgets'] ) ? $options['sidebars_widgets'] : array();
+			$sidebars_to_remove = apply_filters( 'go_copylayout_sidebars_to_remove', $sidebars_to_remove );
+
+			foreach ( $sidebars_to_remove as $key => $sidebar )
+			{
+				unset( $options['sidebars_widgets'][ $key ] );
+			}//end foreach
+
+			update_option( 'sidebars_widgets', $options['sidebars_widgets'] );
+		}//end if
+
+		foreach ( $options as $name => $widget_data )
+		{
+			if ( ! $has_widgets || 'widget_' !== substr( $name, 0, 7 ) )
+			{
+				continue;
+			}//end if
+
+			echo '<li>Deleting ' . esc_html( $name ) . '...</li>';
+			$widget_keys = array_keys( $widget_data );
+
+			foreach ( $widget_keys as $key )
+			{
+				if ( '_multiwidget' == $key )
+				{
+					continue;
+				}//end if
+
+				$found = FALSE;
+
+				foreach ( $options['sidebars_widgets'] as $sidebar )
+				{
+					if ( $found = in_array( substr( $name, 7 ) . "-{$key}", $sidebar ) )
+					{
+						break;
+					}//end if
+				}//end foreach
+
+				if ( ! $found )
+				{
+					unset( $options[ $name ][ $key ] );
+				}//end if
+			}//end foreach
+
+			update_option( $name, $options[ $name ] ?: array() );
+		}//end foreach
+
+		return $options;
+	}//end delete_sidebars
+
+	/**
+	 * Adds sidebars from imported data
+	 *
+	 * @param $options Array array of options
+	 * @param $layout Array data from import
+	 */
+	public function add_sidebars( $options, $layout )
+	{
+		$has_widgets  = isset( $layout['widgets'] );
+		$has_sidebars = isset( $layout['sidebars_widgets'] );
+
+		$import_sidebars = unserialize( $layout['sidebars_widgets'] );
+
+		if ( $options['sidebars_widgets'] )
+		{
+			// first, unserialize all of the widgets we're importing
+			foreach ( $layout['widgets'] as $name => $value )
+			{
+				$layout['widgets'][ $name ] = unserialize( $value );
+			}//end foreach
+
+			foreach ( $import_sidebars as $import_sidebar_key => $import_sidebar )
+			{
+				// if the sidebar exists in the options, it has been marked for preservation - we don't
+				// want to override that sidebar
+				if ( isset( $options['sidebars_widgets'][ $import_sidebar_key ] ) || ! empty( $options['sidebars_widgets'][ $import_sidebar_key ] ) )
+				{
+					continue;
+				}//end if
+
+				// now we loop over the widgets that exist in the imported sidebar and import them,
+				// overriding the imported widget IDs where necessary
+				foreach ( $import_sidebar as $import_widget_key => $import_widget )
+				{
+					// get widget name and ID # from the widget ID slug
+					preg_match( '/(.+)-([0-9]+)$/', $import_widget, $matches );
+
+					// option names are prefixed
+					$widget_option_name = "widget_{$matches[1]}";
+
+					$import_finalized_id = $import_widget_id = $matches[2];
+					$import_widget_data = $layout['widgets'][ $widget_option_name ][ $import_widget_id ];
+
+					// if the ID of the widget we're trying to import ALREADY exists in this site's
+					// widget options, we need to change the widget id of the widget we're importing
+					if ( isset( $options[ $widget_option_name ][ $import_widget_id ] ) )
+					{
+						$exists = TRUE;
+						$import_finalized_id = 0;
+
+						// search through the current site's widget options for the first available
+						// widget config slot
+						while ( $exists )
+						{
+							// we increment first, because widgets never have an ID of 0
+							$import_finalized_id++;
+
+							$exists = isset( $options[ $widget_option_name ][ $import_finalized_id ] );
+						}//end while
+					}//end if
+
+					if ( ! isset( $options[ $widget_option_name ] ) )
+					{
+						$options[ $widget_option_name ] = array();
+
+						if ( isset( $layout['widgets'][ $widget_option_name ]['_multiwidget'] ) )
+						{
+							$options[ $widget_option_name ]['_multiwidget'] = $layout['widgets'][ $widget_option_name ]['_multiwidget'];
+						}//end if
+					}//end if
+
+					// change the slug of the widget in the sidebar
+					$import_sidebar[ $import_widget_key ] = "{$matches[1]}-$import_finalized_id";
+
+					// add the widget data to the options array
+					$options[ $widget_option_name ][ $import_finalized_id ] = $import_widget_data;
+				}//end foreach
+
+				$options[ 'sidebars_widgets' ][ $import_sidebar_key ] = $import_sidebar;
+			}//end foreach
+
+			foreach ( $options as $name => $widget_data )
+			{
+				if ( 'widget_' !== substr( $name, 0, 7 ) )
+				{
+					continue;
+				}//end if
+
+				echo '<li>Adding ' . esc_html( $name ) . '...</li>';
+				update_option( $name, $options[ $name ] ?: array() );
+			}//end foreach
+
+			update_option( 'sidebars_widgets', $options['sidebars_widgets'] ?: array() );
+		}//end if
+		else
+		{
+			// if we get in here, there's no widget areas in the local settings.  Overwrite all local
+			// settings.
+			update_option( 'sidebars_widgets', $import_sidebars ?: array() );
+
+			foreach( $layout['widgets'] as $name => $value )
+			{
+				echo '<li>Adding ' . esc_html( $name ) . '...</li>';
+				$options[ $name ] = unserialize( $value );
+				update_option( $name, $options[ $name ] ?: array() );
+			}//end foreach
+		}//end else
+
+		return $options;
+	}//end add_sidebars
 }//end class
 
 function go_copylayout()
