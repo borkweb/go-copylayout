@@ -68,6 +68,8 @@ class GO_CopyLayout
 
 	/**
 	 * fixes the arguments so they are all snazzy-like
+	 *
+	 * @return $args snazzi-fied arguments
 	 */
 	public function fixup_args( $args = '' )
 	{
@@ -88,6 +90,8 @@ class GO_CopyLayout
 
 	/**
 	 * Get the sidebar/widget options from the options table
+	 *
+	 * @return $return widget options
 	 */
 	public function get_options( $args = '' )
 	{
@@ -160,6 +164,8 @@ class GO_CopyLayout
 
 	/**
 	 * Replace the current layout with a user-submitted layout.
+	 *
+	 * @param
 	 */
 	public function replace_layout( $layout )
 	{
@@ -211,7 +217,7 @@ class GO_CopyLayout
 		//
 		// add layout pieces back in
 		//
-		//
+
 		echo '<h3>Adding options...</h3><ol>';
 
 		if( $has_sidebars )
@@ -228,6 +234,7 @@ class GO_CopyLayout
 	 *
 	 * @param $options Array array of options
 	 * @param $layout Array data from import
+	 * @return $options updated array of options
 	 */
 	public function delete_sidebars( $options, $layout )
 	{
@@ -293,6 +300,7 @@ class GO_CopyLayout
 	 *
 	 * @param $options Array array of options
 	 * @param $layout Array data from import
+	 * @return $options updated array of options
 	 */
 	public function add_sidebars( $options, $layout )
 	{
