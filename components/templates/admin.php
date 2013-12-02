@@ -3,7 +3,7 @@
 	<div class="content-container">
 		<h3>Current Layout (Read Only)</h3>
 		<p>Copy this block to save the current layout for archiving or applying to another blog.</p>
-		<textarea cols="100" rows="15"><?php echo esc_html($current); ?></textarea><br/>
+		<textarea cols="100" rows="15"><?php echo esc_textarea( $current ); ?></textarea><br/>
 
 		<h3>Replace Layout</h3>
 		<p>Paste a saved layout here to override the current layout.</p>
