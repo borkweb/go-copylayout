@@ -1,5 +1,5 @@
 === Gigaom Copy Layout ===
-Contributors: borkweb, methnen, misterbisson, zbtirrell
+Contributors: borkweb, methnen, misterbisson, smglauser, zbtirrell
 Tags: widgets, admin
 Requires at least: 3.6
 Tested up to: 3.8.1
