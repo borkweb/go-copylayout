@@ -23,7 +23,7 @@ class GO_CopyLayout
 			return;
 		}//end if
 
-		add_action('admin_menu', array( $this, 'admin_menu' ) );
+		add_action( 'admin_menu', array( $this, 'admin_menu' ) );
 	}//end init
 
 	/**
@@ -33,6 +33,8 @@ class GO_CopyLayout
 	{
 		global $pagenow;
 
+		$js_min = ( defined( 'GO_DEV' ) && GO_DEV ) ? 'lib' : 'min';
+
 		if ( 'widgets.php' != $pagenow )
 		{
 			return;
@@ -40,7 +42,7 @@ class GO_CopyLayout
 
 		wp_register_script(
 			'go-copylayout',
-			plugins_url( 'js/go-copylayout.js', __FILE__ ),
+			plugins_url( 'js/' . $js_min . '/go-copylayout.js', __FILE__ ),
 			array( 'jquery' ),
 			$this->script_version,
 			TRUE
@@ -63,7 +65,7 @@ class GO_CopyLayout
 	 */
 	public function admin_menu()
 	{
-		add_theme_page('Copy Layout', 'Copy Layout', 'edit_theme_options', 'copy-layout', array( $this, 'page' ) );
+		add_theme_page( 'Copy Layout', 'Copy Layout', 'edit_theme_options', 'copy-layout', array( $this, 'page' ) );
 	}//end admin_menu
 
 	/**
@@ -80,7 +82,7 @@ class GO_CopyLayout
 
 		$args = wp_parse_args( $args, $defaults );
 
-		if( is_string( $args['which'] ) )
+		if ( is_string( $args['which'] ) )
 		{
 			$args['which'] = explode( ',', $args['which'] );
 		}//end if
@@ -101,7 +103,7 @@ class GO_CopyLayout
 
 		$return = array();
 
-		if( in_array( 'sidebars_widgets', $args['which'] ) )
+		if ( in_array( 'sidebars_widgets', $args['which'] ) )
 		{
 			$return['sidebars_widgets'] = $options['sidebars_widgets'];
 		}//end if
@@ -110,15 +112,15 @@ class GO_CopyLayout
 
 		$widgets = array();
 
-		foreach( $options as $name => $value )
+		foreach ( $options as $name => $value )
 		{
-			if( $do_widgets && 'widget_' === substr($name, 0, 7) )
+			if ( $do_widgets && 'widget_' === substr( $name, 0, 7 ) )
 			{
 				$widgets[ $name ] = $value;
 			}//end if
 		}//end foreach
 
-		if( $do_widgets )
+		if ( $do_widgets )
 		{
 			$return['widgets'] = $widgets;
 		}//end if
@@ -127,7 +129,7 @@ class GO_CopyLayout
 
 		$return = serialize( $return );
 
-		if( $args['base64'] )
+		if ( $args['base64'] )
 		{
 			$return = base64_encode( $return );
 		}//end if
@@ -140,16 +142,16 @@ class GO_CopyLayout
 	 */
 	public function page()
 	{
-		if( ! current_user_can('edit_theme_options') )
+		if ( ! current_user_can( 'edit_theme_options' ) )
 		{
-			wp_die( __('You do not have sufficient permissions to access this page.') );
+			wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
 		}//end if
 
-		if( isset( $_POST['layout'] ) )
+		if ( isset( $_POST['layout'] ) )
 		{
 			if ( ! check_admin_referer( 'go-copylayout-override', '_go_copylayout_override_nonce' ) )
 			{
-				wp_die( __('Invalid nonce') );
+				wp_die( __( 'Invalid nonce' ) );
 			}//end if
 
 			return $this->replace_layout( $_POST['layout'] );
@@ -171,16 +173,16 @@ class GO_CopyLayout
 	{
 		echo '<div class="wrap"><h2>Applying New Layout</h2><div class="content-container">';
 
-		$layout = base64_decode($layout);
+		$layout = base64_decode( $layout );
 
 		if( false === $layout )
 		{
 			wp_die( 'Error during Base64 decoding. <a href="themes.php?page=copy-layout">Go back</a>?' );
 		}//end if
 
-		$layout = unserialize($layout);
+		$layout = unserialize( $layout );
 
-		if( false === $layout )
+		if ( false === $layout )
 		{
 			wp_die( 'Error during unserialize operation. <a href="themes.php?page=copy-layout">Go back</a>?' );
 		}//end if
@@ -193,7 +195,7 @@ class GO_CopyLayout
 		// unserialize all of the current site's widgets
 		foreach ( $options as $name => $widget_data )
 		{
-			if( 'widget_' === substr( $name, 0, 7 ) )
+			if ( 'widget_' === substr( $name, 0, 7 ) )
 			{
 				$options[ $name ] = unserialize( $options[ $name ] );
 			}//end if
@@ -220,7 +222,7 @@ class GO_CopyLayout
 
 		echo '<h3>Adding options...</h3><ol>';
 
-		if( $has_sidebars )
+		if ( $has_sidebars )
 		{
 			echo '<li>Adding sidebar_widgets...</li>';
 			$options = $this->add_sidebars( $options, $layout );
@@ -396,7 +398,7 @@ class GO_CopyLayout
 			// settings.
 			update_option( 'sidebars_widgets', $import_sidebars ?: array() );
 
-			foreach( $layout['widgets'] as $name => $value )
+			foreach ( $layout['widgets'] as $name => $value )
 			{
 				echo '<li>Adding ' . esc_html( $name ) . '...</li>';
 				$options[ $name ] = unserialize( $value );
