@@ -40,7 +40,7 @@ class GO_CopyLayout
 
 		wp_register_script(
 			'go-copylayout',
-			plugins_url( 'js/go-copylayout.js', __FILE__ ),
+			plugins_url( 'js/lib/go-copylayout.js', __FILE__ ),
 			array( 'jquery' ),
 			$this->script_version,
 			TRUE
