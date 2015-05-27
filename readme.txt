@@ -1,4 +1,4 @@
-=== Gigaom Copy Layout ===
+=== Go Copy Layout ===
 Contributors: borkweb, methnen, misterbisson, smglauser, zbtirrell
 Tags: widgets, admin
 Requires at least: 3.6
@@ -19,13 +19,13 @@ consumed on your myriad of development (and production) sites.
 === Links ===
 
 * [WordPress plugin page](http://wordpress.org/plugins/go-copylayout/)
-* [GitHub repo](https://github.com/GigaOM/go-copylayout)
+* [GitHub repo](https://github.com/borkweb/go-copylayout)
 
 == Installation ==
 
 1. Upload `go-copylayout` to the `/wp-content/plugins/` directory
-1. Activate 'Gigaom Copy Layout' through the 'Plugins' menu in WordPress
+1. Activate 'Go Copy Layout' through the 'Plugins' menu in WordPress
 
 == Contributing ==
 
-This plugin is developed and [available on GitHub](https://github.com/GigaOM/go-copylayout). Contributions and questions are welcome!
+This plugin is developed and [available on GitHub](https://github.com/borkweb/go-copylayout). Contributions and questions are welcome!

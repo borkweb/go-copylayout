@@ -1,4 +1,4 @@
-Gigaom Copy Layout
+Go Copy Layout
 =============
 
 Utility WP plugin for importing/exporting widget configuration
@@ -16,7 +16,7 @@ Utility WP plugin for importing/exporting widget configuration
 ## Links
 
 * [WordPress plugin page](http://wordpress.org/plugins/go-copylayout/)
-* [GitHub repo](https://github.com/GigaOM/go-copylayout)
+* [GitHub repo](https://github.com/borkweb/go-copylayout)
 
 ## Credits
 Based off of a plugin built by [Annika Backstrom](https://github.com/abackstrom) for [Plymouth State University](https://github.com/plymouthstate)
